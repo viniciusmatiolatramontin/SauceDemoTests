@@ -2,38 +2,25 @@ import os
 
 from selenium import webdriver
 
+from Pages.CartPage import CartPage
+from Pages.LoginPage import LoginPage
+from Pages.MainPage import MainPage
+
 os.environ['PATH'] += r"C:/Users/vinic/Downloads/geckodriver-v0.33.0-win64"
 driver = webdriver.Firefox()
-driver.get('https://www.saucedemo.com/v1/')
 
+login_page = LoginPage(driver)
+login_page.open_page('https://www.saucedemo.com/v1/')
+login_page.enter_username('standard_user')
+login_page.enter_password('secret_sauce')
+login_page.click_login()
 
-username = driver.find_element('id', 'user-name')
-password = driver.find_element('id', 'password')
-login = driver.find_element('id', 'login-button')
+mainPage = MainPage(driver)
+mainPage.add_items()
+mainPage.remove_items()
+mainPage.enter_cart()
 
-
-username.send_keys('standard_user')
-password.send_keys('secret_sauce')
-login.click()
-
-
-for i in range(1, 7):
-    add = driver.find_element('css selector', ".inventory_list > div:nth-child(" + str(i) +
-                              ") > .pricebar > button")
-
-    add.click()
-
-    remove = driver.find_element('css selector', ".inventory_list > div:nth-child(" + str(i) +
-                                 ") > .pricebar > button")
-
-    remove.click()
-
-
-cartLink = driver.find_element("css selector", ".shopping_cart_link > svg > path")
-cartLink.click()
-
-
-cart_items = driver.find_elements("class name", "cart_item")
-
+cartPage = CartPage(driver)
+cart_items = cartPage.find_cart_items()
 
 assert len(cart_items) == 0
